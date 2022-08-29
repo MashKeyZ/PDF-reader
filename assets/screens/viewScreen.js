@@ -3,8 +3,8 @@ import { StyleSheet, Dimensions, View,Button,Text } from 'react-native';
 import Pdf from 'react-native-pdf';
 import Header from '../components/Header'
 
-    function ViewScreen  ()  {
-   
+    function ViewScreen  (props)  {
+        const {navigation} = props;
         //const source = { uri: 'http://engineering.nyu.edu/gk12/amps-cbri/pdf/Basic%20Electronics.pdf' };
         //const source = require('./test.pdf');  // ios only
         //const source = {uri:'bundle-assets://test.pdf' };
@@ -17,20 +17,19 @@ import Header from '../components/Header'
         const [PathPdf,setPathPdf] = useState('');
 
         useEffect(()=>{
-            setPathPdf('http://engineering.nyu.edu/gk12/amps-cbri/pdf/Basic%20Electronics.pdf')
+            //setPathPdf('http://engineering.nyu.edu/gk12/amps-cbri/pdf/Basic%20Electronics.pdf')
+            setPathPdf(navigation.state.params.path);
+            console.log(PathPdf)
         },[])
 
         return (
             <>
-               <Header/>
-               <View style={styles.progressView}>
-                <Text style={styles.text}>{currentPage}/{totalPage}</Text>
-             </View>
+            
             <View style={styles.container}>
                 <Pdf 
                     trustAllCerts={false}
                     source={{
-                      uri: 'http://engineering.nyu.edu/gk12/amps-cbri/pdf/Basic%20Electronics.pdf',
+                      uri: PathPdf,
                       cache: true,
                     }}
                     
@@ -46,7 +45,10 @@ import Header from '../components/Header'
                         console.log(`Link pressed: ${uri}`);
                     }}
                     style={styles.pdf}/>
-               
+                <View style={styles.progressView}>
+                     <Text style={styles.text}>{currentPage}/{totalPage}</Text>
+                </View>
+
             </View>
               </>
         )
@@ -70,7 +72,6 @@ const styles = StyleSheet.create({
     
         justifyContent: 'flex-end',
         padding : 5,
-        flex: 1,
         position: 'absolute',
         right:0,
         top: 0,
@@ -83,6 +84,7 @@ const styles = StyleSheet.create({
         bottom:0,
         padding:7,
         fontSize:13,
+        borderRadius:10,
     }
 });
 

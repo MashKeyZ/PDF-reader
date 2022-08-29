@@ -1,14 +1,19 @@
 import React,{useState, useCallback} from 'react';
-import { Button, View,StyleSheet, Alert,Text,Dimensions,DialogInput } from 'react-native';
+import { Button, View,StyleSheet, Alert,Text,Dimensions,DialogInput, TouchableOpacity,Image } from 'react-native';
 import RNImageToPdf from 'react-native-image-to-pdf';
 import DocumentPicker, { types } from 'react-native-document-picker';
+import { SafeAreaView } from 'react-navigation';
+import OpenFile  from '../images/open.png'
+import SaveFile  from '../images/save.png'
+import Convert  from '../images/conv.png'
 
-
-const ImageToPdf = () => {
+const ImageToPdf = ({navigation}) => {
     const [fileResponse, setFileResponse] = useState([]);
     const [fileName,setFileName] = useState([]);
-    const [visible, setVisible] = React.useState(false);
-    const [pdfPath, setPdfPath] = React.useState('');
+    const [visible, setVisible] = useState(false);
+    const [pdfPath, setPdfPath] = useState('');
+    const [pdfNewPath, setNewPdfPath] = useState('');
+    const [fileNewName,setNewFileName] = useState([]);
     
         const handleDocumentSelection = useCallback(async () => {
            
@@ -44,46 +49,70 @@ const ImageToPdf = () => {
             const options = {
                 imagePaths:  fileResponse,
                 name: Name,
-              /*  maxSize: { // optional maximum image dimension - larger images will be resized
+                maxSize: { // optional maximum image dimension - larger images will be resized
                     width: 900,
                     height: Math.round(Dimensions.get('window').height / Dimensions.get('window').width * 900),
                 },
-                quality: .1, // optional compression paramter*/
+               /* quality: .1, // optional compression paramter*/
             };
             const pdf = await RNImageToPdf.createPDFbyImages(options);
             setPdfPath(pdf.filePath) 
             console.log(pdf.filePath);
-            saveDirectory();
+            Alert.alert("File has been converted to pdf!!!")
+            const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+           // saveDirectory();
         } catch(e) {
             console.log(e);
+         
         }
     }
 
-   async function  saveDirectory() {
-
+   const saveDirectory =async  () =>{
+    const flushPromises = () => new Promise(resolve => setImmediate(resolve));
         var RNFS = require('react-native-fs');
-        var nam = fileName.split(".")[0]+'_PDF-studio';
-        const dest = RNFS.DownloadDirectoryPath+'/'+nam+'.pdf'
         
-       const prom = await RNFS.moveFile(pdfPath,dest)
+        var nam = fileName.split(".")[0]+'_img-pdf';
+        const dest = RNFS.DownloadDirectoryPath+'/'+nam+'.pdf'
+       
+         RNFS.moveFile(pdfPath,dest)
             .then((name)=>{
-             Alert.alert("File saved to documents!! "+dest)
-                         
+                setNewPdfPath(dest);
+                setNewFileName(nam)
+             Alert.alert("File saved to documents!! "+pdfPath)
+              return  navigation.push('ViewScreen',{path:dest,name:nam});
             })
             .catch((err) =>{
+                console.log('An error occured')
               return console.log( err)
+              
             })
-            const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+           
     }
 
     return (
         <>
            <View style={styles.container}>
-                <Button title='Convert' style={styles.button} onPress={myAsyncPDFFunction}  />
-                <Button title="Select 📑" onPress={handleDocumentSelection}/>
+                <TouchableOpacity style={styles.button1} onPress={handleDocumentSelection}>
+                    <View style={styles.imgCont}>
+                        <Image style={styles.image} source={OpenFile}/>
+                    </View>
+                    <Text style={styles.text}>Select </Text>
+                </TouchableOpacity>
+                <TouchableOpacity  style={styles.button1} onPress={myAsyncPDFFunction}  >
+                    <View style={styles.imgCont}>
+                        <Image style={styles.image} source={Convert}/>
+                    </View>
+                    <Text style={styles.text}>Convert</Text>
+                </TouchableOpacity>
+                <TouchableOpacity title="Save" style={styles.button1} onPress={saveDirectory}>
+                    <View style={styles.imgCont}>
+                        <Image style={styles.image} source={SaveFile}/>
+                    </View>
+                    <Text style={styles.text}>Save</Text>
+                </TouchableOpacity>
                 <Text>{fileName}</Text>
            
-           </View>
+           </View >
         </>
     )
   }
@@ -93,13 +122,19 @@ const ImageToPdf = () => {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-      
+        width: Dimensions.get('window').width,
+        paddingHorizontal:10,
     },
-    button:{
-        position: 'absolute',
+    button1:{
+        display: 'flex',
+        flexDirection: 'row',
         width: '100%',
-        marginLeft: 3,
-        padding: 40,
+        margin: 5,
+        backgroundColor : '#ff471a',
+        alignItems: 'center',
+        padding: 20,
+        borderRadius: 35,
+        justifyContent: 'center',
     },
     progressView:{
         
@@ -109,6 +144,10 @@ const ImageToPdf = () => {
     },
     text:{
         color : 'white',
+        fontSize:23,
+        fontWeight: 'bold',
+    },imgCont:{
+        marginHorizontal:10,
     }
 });
 
