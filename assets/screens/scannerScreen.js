@@ -1,27 +1,53 @@
 import React, { useRef, useState, useEffect } from "react"
-import { View, StyleSheet, Text, TouchableOpacity, Image, Platform, SafeAreaView, Button } from "react-native"
+import { View, ScrollView,StyleSheet,FlatList, Dimensions,Text, TouchableOpacity, Image, Platform, SafeAreaView, Button } from "react-native"
 import Permissions from 'react-native-permissions';
-import ImagePicker from 'react-native-image-crop-picker'
+import ImagePicker from 'react-native-image-crop-picker';
+import Photo from '../components/photo';
 
 export default function ScannerScreen() {
+
+  const [data,setData] = useState()
+
  
   function handleImagePicker (){
-    ImagePicker.openPicker({
+    const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+    console.log('Image picker function')
+    ImagePicker.openCamera({
       width: 300,
       height: 400,
       cropping: true,
+      multiple: true,
+      freeStyleCropEnabled : true,
     }).then(image => {
-      console.log(image);
-    });
+      setData(image.path);
+      console.log(image.path);
+    }).catch(err => { console.warn(err);})
   }
-
+  /**   <FlatList 
+          data={data}
+          renderItem={Photo}
+          keyExtractor={(item,index )=>index}
+         
+          />   */
   return (
    <>
-    <SafeAreaView style={styles.container} >
-      <View style={styles.options}>
-          <Button style={styles.button} onClick={handleImagePicker} title="Open Camera"/>
+    <View style={styles.container} >
+      <View style={styles.containerScroll}>
+        
+        <View style={styles.options}>
+            <Button style={styles.button} onPress={handleImagePicker} title="Open Camera"/>
+        </View>
+     
+       
+        <Photo item={data}/>
+        <Photo item={data}/>
+        <Photo item={data}/>
+        <Photo item={data}/>
+        <Photo item={data}/>
+        <Photo item={data}/>
+        <Photo item={data}/>
       </View>
-    </SafeAreaView>
+    </View>
    </>
   )
 }
@@ -29,9 +55,9 @@ export default function ScannerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignContent: 'center',
-    alignItems: 'center',
-
+    width: Dimensions.get('window').width,
+    paddingHorizontal: 5,
+    justifyContent: 'center',
   },
   button: {
     alignSelf: "center",
@@ -51,6 +77,9 @@ const styles = StyleSheet.create({
     flex:1,
     justifyContent: "center",
     alignItems: "center"
+  },
+  containerScroll: {  
+
   }
 })
 

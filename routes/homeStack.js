@@ -3,6 +3,7 @@ import { createAppContainer } from 'react-navigation';
 import ViewScreen from '../assets/screens/viewScreen'
 import Home from '../assets/screens/documents'
 import ImageConvert from '../assets/screens/imagePdfScreen'
+import scannerScreen from '../assets/screens/scannerScreen'
 /*
 const Stack = createStackNavigator();
 
@@ -66,6 +67,26 @@ const screens = {
         screen: ImageConvert,
         navigationOptions: ({ navigation }) => ({
             title: `Image to PDF`,
+       
+            headerTransitionPreset: 'uikit',
+            cardShadowEnabled: true,
+            headerStyle: 
+            {   backgroundColor:'#ff471a',
+            },
+            headerTitleStyle: 
+            { color:'white',
+           
+            },
+            headerTitleContainerStyle:{
+            
+            },
+            headerTintColor:'white',
+          }),
+      },
+      scannerScreen: {
+        screen: scannerScreen,
+        navigationOptions: ({ navigation }) => ({
+            title: `Scanner`,
        
             headerTransitionPreset: 'uikit',
             cardShadowEnabled: true,

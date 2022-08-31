@@ -7,6 +7,7 @@ import { StyleSheet, Text, View,Image,
 import React,{useCallback} from 'react'
 import logo from '../images/openImg.png'
 import logo2 from '../images/openFile.png'
+import scan from '../images/scan.png'
 import DocumentPicker, { types } from 'react-native-document-picker';
 
 const Documents = ({navigation}) => {
@@ -42,11 +43,26 @@ const Documents = ({navigation}) => {
         navigation.push('ImageConvert')
        
     }
+    const handleScanClick =()=>{
+        navigation.push('scannerScreen')
+       
+    }
  
   return (
     <>
     
         <View style={styles.container}>
+            <View style={styles.btn}>
+                <TouchableOpacity style={styles.btnCont2} onPress={handleDocumentSelection}>
+                        <View style={styles.textCont}>
+                            <Text style={styles.text}>Open PDF</Text>
+                        </View>
+                        <View style={styles.imageCont}>
+                            <Image source={logo2} style={styles.image} />
+                        </View>
+                    </TouchableOpacity>      
+                </View>
+
             <View style={styles.btn}>
                 <TouchableOpacity style={styles.btnCont} onPress={handleReadClick}>
                     <View style={styles.imageCont}>
@@ -58,12 +74,12 @@ const Documents = ({navigation}) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.btn}>
-               <TouchableOpacity style={styles.btnCont2} onPress={handleDocumentSelection}>
+               <TouchableOpacity style={styles.btnCont2} onPress={handleScanClick}>
                     <View style={styles.textCont}>
-                        <Text style={styles.text}>Open PDF</Text>
+                        <Text style={styles.text}>Scanner</Text>
                     </View>
                     <View style={styles.imageCont}>
-                        <Image source={logo2} style={styles.image} />
+                        <Image source={scan} style={styles.image} />
                     </View>
                 </TouchableOpacity>      
             </View>
@@ -101,7 +117,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ff471a',
         width: '100%',
         alignItems: 'center',
-        height: '100%',
+        height: '75%',
         borderBottomEndRadius: 50,
         borderTopEndRadius: 50,
         borderTopStartRadius: 35,
@@ -109,11 +125,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     btnCont2:{
-        marginTop:20,
+   
         backgroundColor: '#ff471a',
         width: '100%',
         alignItems: 'center',
-        height: '100%',
+        height: '80%',
         borderBottomStartRadius: 50,
         borderTopStartRadius: 50,
         borderTopEndRadius: 35,

@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   body:{
     marginTop:10,
-    height: (Dimensions.get('window').height/2)-35,
+    height: (Dimensions.get('window').height/2),
     borderWidth: 1,
     width: (Dimensions.get('window').width),
     borderColor: '#cccccc',
