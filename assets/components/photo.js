@@ -10,38 +10,16 @@ import logo2 from '../images/delete.png'
 import scan from '../images/scan.png'
 import DocumentPicker, { types } from 'react-native-document-picker';
 
-const Documents = ({item}) => {
+const Documents = ({data}) => {
     //console.log(item)
-    const [path,setPath] = useState()
-
+    const [path1,setPath] = useState('')
+    let count = 0
     useEffect(() =>{
-        setPath(item)
-    },[item])
-    const handleDocumentSelection = useCallback(async () => {
-           
-           
-            try {
-            const response = await DocumentPicker.pick({
-                presentationStyle: 'fullScreen',
-                type: [types.pdf],
-                allowMultiSelection: false,
-            })
-            
-            const hold = response.map((file, index) => {
-            
-                return file?.uri
-            })
-            const holdName = response.map((file, index) => {
-            
-                return file?.name
-            })
-            console.log(hold[0])
-            navigation.push('ViewScreen',{path:hold[0],name:holdName})
-                
-            } catch (err) {
-            console.warn(err);
-            }
-        }, []);
+        count +=1;
+        setPath(data)
+        console.log(count +". Component : "+(data ==undefined ? '' : data))
+    },[data])
+
 
     const handleReadClick =()=>{
         //navigation.push('ImageConvert')
@@ -59,17 +37,9 @@ const Documents = ({item}) => {
         <View style={styles.container}>
             <View style={styles.shad}>
                 <View style={styles.btnCont} >
-                    <View style={styles.imageCont}>
-                        <Image source={{uri : path}} style={styles.image} />
-                    </View>
-                        <View style={styles.textCont}>
-                            <Text style={styles.text}>#Page 1</Text>
-                        </View>
-                    <TouchableOpacity style={styles.btn} onPress={handleReadClick}>
-                        <View style={styles.imageCont2}>
-                            <Image source={logo2} style={styles.image2} />
-                        </View>
-                    </TouchableOpacity>
+                    <View style={styles.imageContainer}>
+                        <Image source={{uri : data}} style={styles.image} />
+                    </View> 
                 </View>
             </View>
          
@@ -83,27 +53,20 @@ const styles = StyleSheet.create({
     container:{
         width: '100%',
         display: 'flex',
-        height: Dimensions.get('window').height/7,
+        height: Dimensions.get('window').height/2,
        // borderWidth: 1,
         marginTop:5,
-        
-      
+        justifyContent: 'center',
+        justifyItems: 'center',
+       
     },
     image:{
-        width:80 ,
-        height: '70%',
-        resizeMode:'contain',
-    },
-    text:{
-       
-        paddingVertical: 6,
-        fontSize: 30,
-        color: '#3d3d4c',
-        fontFamily: 'sans-serif',
-        fontWeight: 'bold',  
+        width:'90%',
+        height: '90%',
+        resizeMode:'cover',
     },
     btnCont:{
-        width: '100%',
+        width: '90%',
         height: '100%',
         //backgroundColor:'white',
         shadowColor: "#000",
@@ -116,19 +79,14 @@ const styles = StyleSheet.create({
         elevation: 5,
         borderBottomRightRadius:10,
         display:'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        borderRadius:20,
         alignItems: 'center',
-        paddingHorizontal:10,
-        
+        paddingHorizontal:10,   
     },
     shad:{
-       
-        backgroundColor:'white',
-        
-        width: '100%',
+        width: '90%',
         height: '100%',
-       
+        paddingTop:15,
     },image2:{
         width:40 ,
         height: 30,
@@ -139,6 +97,12 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyItems: 'center',
+    },imageContainer:{
+        width:'100%',
+        height:'100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 })
 

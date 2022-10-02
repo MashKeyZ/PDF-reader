@@ -87,7 +87,7 @@ const screens = {
         screen: scannerScreen,
         navigationOptions: ({ navigation }) => ({
             title: `Scanner`,
-       
+            headerLayoutPreset: 'center',
             headerTransitionPreset: 'uikit',
             cardShadowEnabled: true,
             headerStyle: 
@@ -98,7 +98,7 @@ const screens = {
            
             },
             headerTitleContainerStyle:{
-            
+                
             },
             headerTintColor:'white',
           }),

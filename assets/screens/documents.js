@@ -1,8 +1,11 @@
 import { StyleSheet, Text, View,Image, Button, Dimensions,ScrollView,FlatList} from 'react-native'
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import logo from '../images/logo.png'
 import DocuComponent from '../components/docuComp'
 import ButtonBody from '../components/buttonBody'
+import RNFS from 'react-native-fs'
+import Permissions from 'react-native-permissions';
+
 const Documents = ({navigation}) => {
 
   const data = [
@@ -21,10 +24,89 @@ const Documents = ({navigation}) => {
       }
   ]
 
+    // collecting data from device
+   
+    const [getAllPath, setAllPath] = useState([])
+    const [bookList, setBookList] = useState([]);
+  
+    useEffect(() => {
+      Test();
+    }, []);
+  
+ 
+  
+    async function Test(){
+      let list2 =[]
+
+      //Get all pdf files from Downloads Direcory
+      console.log("Downloads directory : \n\n")
+      await RNFS.readDir(RNFS.DownloadDirectoryPath) // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
+      .then((result) => {
+        //console.log('GOT RESULT New', result);
+        result.forEach((item) =>{
+          console.log("Item name \n"+item.name)
+          if (item.name.endsWith('.pdf')) {
+            console.log("Item name "+item.name);
+            setAllPath([...getAllPath, item])
+            console.log("\nItem Added !!! ");
+           }
+          else if (item.isDirectory()) {
+           
+            RNFS.readDir(item.path)
+              .then(result => {
+                
+                list2 = result.filter((item) => item.name.endsWith('.pdf'))
+                console.log("Item name "+list2);
+                setAllPath([...getAllPath, ...list2])
+                console.log("\nItem Added !!! ");
+              }).catch((error) => {
+                console.log(error)
+              })
+          }
+
+        })
+      })
+      .catch((err) => {
+        console.log(err.message, err.code);
+      });
+
+      console.log("Documents directory : \n\n")
+
+      await RNFS.readDir(RNFS.DocumentDirectoryPath) // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
+      .then((result) => {
+        //console.log('GOT RESULT New', result);
+        result.forEach((item) =>{
+          console.log("Item name \n"+item.path)
+          if (item.name.endsWith('.pdf')) {
+            console.log("Item name "+item.path);
+            setAllPath([...getAllPath, item])
+            console.log("\nItem Added !!! ");
+           }
+          else if (item.isDirectory()) {
+           
+            RNFS.readDir(item.path)
+              .then(result => {
+                
+                list2 = result.filter((item) => item.name.endsWith('.pdf'))
+                console.log("Item name "+list2);
+                setAllPath([...getAllPath, ...list2])
+                console.log("\nItem Added !!! ");
+              }).catch((error) => {
+                console.log(error)
+              })
+          }
+
+        })
+      })
+      .catch((err) => {
+        console.log(err.message, err.code);
+      });
+    }
 
   const handleReadClick = () => {
       navigation.push('ViewScreen')
   }
+  
   return (
     <>
     <View style={styles.container}>
@@ -36,7 +118,7 @@ const Documents = ({navigation}) => {
           renderItem={DocuComponent}
           keyExtractor={(item,index )=>item.id}
           horizontal={true}
-          />        
+          />   
        </View>
        <View style={styles.body}>
           <ButtonBody navigation={navigation}/>
@@ -74,13 +156,14 @@ const styles = StyleSheet.create({
     borderBottomColor: '#cccccc',
     borderBottomWidth: 1,
     paddingVertical: 10,
+    
   },
   body:{
+    display: 'flex',
     marginTop:10,
     height: (Dimensions.get('window').height/2),
-    borderWidth: 1,
     width: (Dimensions.get('window').width),
-    borderColor: '#cccccc',
+    justifyContent: 'center',
   }
 })
 
