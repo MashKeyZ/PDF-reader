@@ -2,19 +2,24 @@ import React, { useRef, useState, useEffect } from "react"
 import { View, ScrollView,StyleSheet,FlatList, Dimensions,Text, TouchableOpacity, Image, Platform, SafeAreaView, Button } from "react-native"
 import Permissions from 'react-native-permissions';
 import ImagePicker from 'react-native-image-crop-picker';
-import Photo from '../components/photo';
+import Photo from '../components/photo'
+import MiniPhoto from '../components/miniPhoto';
 import deleteLogo from '../images/trash.png'
 import doneLogo from '../images/done2.png'
 import addLogo from '../images/addCam.png'
 const ScannerScreen =({navigation})=> {
 
-  const [data,setData] = useState()
-
+  const [data,setData] = useState('\\')
+  const [isActive,setActive] = useState([])
+  const [navData, setNavData] = useState([])
     useEffect(() =>{
       handleImagePicker ()
-      //setData(navigation.state.params.imagePath)
-      console.log(navigation.state.params.imagePath)
+
      },[])
+     useEffect(() =>{ 
+      setActive(navData.toString().split(","))
+      console.log("New Array : "+isActive)
+     },[navData])
  
   function handleImagePicker (){
     const flushPromises = () => new Promise(resolve => setImmediate(resolve));
@@ -27,21 +32,48 @@ const ScannerScreen =({navigation})=> {
       freeStyleCropEnabled : true,
     }).then(image => {
       setData(image.path);
+      setActive(image.path);
+      setNavData(navData =>[...navData,image.path.toString()]);
+      console.log("Path List : "+navData)
       console.log(data);
     }).catch(err => { console.warn(err);})
+  }
+
+  function pictureStateChange(item){
+    console.log("Item clicked")
+    setData(item)
   }
    
   /**   <FlatList 
           data={data}
           renderItem={Photo}
           keyExtractor={(item,index )=>index}
-          />   */
+          />
+          <MiniPhoto data={data} style={styles.miniPhoto}/>
+
+          ({item,index,seperator})=><MiniPhoto data={item}/>
+          */
+
+          
+ 
   return (
    <>
     <View style={styles.container} >
+
+        <View style={styles.miniContainer}>   
+          <FlatList 
+                data={navData}
+                renderItem={({item})=> <MiniPhoto data={item} active={data} setData={setData}/> }
+                keyExtractor={(item)=>item.toString()}
+                horizontal={true}
+               
+                />
+          </View>
+
         <View style={styles.photoContainer}>
               <Photo data={data} style={styles.photo} /> 
         </View>
+
         <View style={styles.navigationContainer}>
             <View style={styles.nav}>
               <View style={styles.logoCont}>
@@ -61,6 +93,7 @@ const ScannerScreen =({navigation})=> {
               </TouchableOpacity>
               </View>
         </View>
+
         <View style={styles.containerScroll}>
           
         </View>
@@ -148,6 +181,20 @@ const styles = StyleSheet.create({
     backgroundColor:"white",
     borderRadius:100/2,
     padding:5,
+  },miniContainer:{
+    width:'100%',
+    height: Dimensions.get('window').height/7,
+    borderWidth: 1,
+    borderColor:'#ccd5df',
+    display: 'flex',
+    flexDirection: 'row',
+    paddingHorizontal: 0,
+    borderRadius:10,
+  },miniPhoto:{
+    alignSelf: 'center',
+    borderWidth: 5,
+    borderColor: 'rgba(60,0,95,255)',
+    
   }
 })
 
